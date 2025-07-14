@@ -15,19 +15,19 @@ public class DataBase
             Name = "admin",
             Password = "123",
             Permissions = ["string1", "string2"]
-        }); 
+        });
     }
 
     public List<User> GetList()
     {
         return users;
     }
-  
+
     public User Get(int id)
     {
-        return users.FirstOrDefault(x=>x.Id.Equals(id));
+        return users.FirstOrDefault(x => x.Id.Equals(id));
     }
-  
+
     public void Create(User newUser)
     {
         var hashPassword = PasswordHasher.Hash(newUser.Password);
@@ -41,7 +41,7 @@ public class DataBase
         });
     }
 
-    public bool Update(int id,User newUser)
+    public bool Update(int id, User newUser)
     {
         var user = users.FirstOrDefault(x => x.Id.Equals(id));
         if (user == null)
@@ -61,7 +61,7 @@ public class DataBase
         user.Permissions = newUser.Permissions;
         return true;
     }
-   
+
     public bool Delete(int id)
     {
         var user = users.FirstOrDefault(x => x.Id.Equals(id));
@@ -97,5 +97,24 @@ public class DataBase
     public User GetByUserName(string userName)
     {
         return users.FirstOrDefault(x => x.Name.Equals(userName));
+    }
+
+    public bool CheckUserHasPermission(int userId, string[] requiredPermissions)
+    {
+        var user = users.FirstOrDefault(x => x.Id.Equals(userId));
+        if (user is null)
+        {
+            throw new Exception("User Not Found");
+        }
+        var result = false;
+        foreach (var permission in requiredPermissions)
+        {
+            if(user.Permissions.Any(x => x.Equals(permission)))
+            {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 }

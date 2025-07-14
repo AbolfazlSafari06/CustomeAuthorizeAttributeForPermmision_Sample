@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Database;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WebApi.Attributes;
  
@@ -15,11 +17,13 @@ public class CustomAuthorizeAttribute : TypeFilterAttribute
 public class CustomAuthorizeFilter : IAuthorizationFilter
 {
     private string[] _requiredPermissions;
+    public readonly DataBase _database;
 
     // Constructor receives parameters from the attribute
-    public CustomAuthorizeFilter(string[] permissions)
+    public CustomAuthorizeFilter(string[] permissions, DataBase database)
     {
         _requiredPermissions = permissions;
+        _database = database;
     }
 
     public void OnAuthorization(AuthorizationFilterContext context)
@@ -31,33 +35,20 @@ public class CustomAuthorizeFilter : IAuthorizationFilter
             return;
         }
 
-
         if(_requiredPermissions.Length == 0)
         {
             return;
         }
         // Check permissions against user claims
-        var userPermissions = context.HttpContext
-            .User.
-            Claims
-            .Where(x=>x.Type.Equals("permission"))
-            .Select(x=>x.Value)
-            .ToList();
+        var userIdInString = context.HttpContext
+            .User
+            .Claims
+            .Where(x => x.Type.Equals("USERID"))
+            .First();
 
-        var userName = context.HttpContext.User.Identity.Name;
-
-        var hasPermission = false;
-
-        // Check permissions against user claims 
-        foreach (var per in _requiredPermissions)
-        {
-            if (userPermissions.Any(x => x.Equals(per)))
-            {
-                hasPermission = true;
-                break;
-            }
-        }
-
+        var userId = int.Parse(userIdInString.Value);
+        bool hasPermission = _database.CheckUserHasPermission(userId, _requiredPermissions);
+         
         if (!hasPermission)
         {
             context.Result = new ForbidResult();

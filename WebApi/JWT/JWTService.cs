@@ -1,6 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security;
 using System.Security.Claims;
 using System.Text;
 using WebApi.Database;
@@ -28,17 +27,13 @@ public class JWTService
         var claims = new List<Claim>
         {
             // Should We Add id To Claims
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim("USERID", user.Id.ToString()),
             new Claim(ClaimTypes.Name, userName),
             new Claim(ClaimTypes.Role, "User"),
         };
 
         // Should We Add Permissions To Claims
-        foreach (var per in user.Permissions)
-        {
-            claims.Add(new Claim("permission", per));
-        }
-
+         
         var tokenOptions = new JwtSecurityToken(
             issuer: jwtIssuer,
             audience: jwtAudience,

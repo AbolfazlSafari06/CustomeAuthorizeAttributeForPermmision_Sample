@@ -41,6 +41,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [CustomAuthorize("string3")]
     public ActionResult Put(int id, [FromBody] User value)
     {
         var isSuccesfull = _database.Update(id, value);
@@ -55,6 +56,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [CustomAuthorize("string3")]
     public ActionResult Delete(int id)
     {
         var isSuccesfull = _database.Delete(id);
