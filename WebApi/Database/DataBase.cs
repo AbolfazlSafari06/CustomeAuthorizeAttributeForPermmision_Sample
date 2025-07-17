@@ -14,7 +14,7 @@ public class DataBase
             Id = 1,
             Name = "admin",
             Password = "123",
-            Permissions = ["string1", "string2"]
+            //Permissions = ["string1", "string2"]
         });
     }
 
@@ -80,7 +80,7 @@ public class DataBase
         {
             return false;
         }
-        user.Permissions = permission.ToList();
+        //user.Permissions = permission.ToList();
         return true;
     }
 
@@ -91,7 +91,8 @@ public class DataBase
         {
             throw new Exception("User Not Found");
         }
-        return user.Permissions.ToArray();
+        return new string[] { user.Name };
+        //return user.Permissions.ToArray();
     }
 
     public User GetByUserName(string userName)

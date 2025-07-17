@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using WebApi.Database;
 using WebApi.JWT;
 using WebApi.Middlewares;
+using WebApi.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +45,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddSingleton<DataBase>();
 builder.Services.AddSingleton<JWTService>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -63,6 +66,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTService.jwtSalt))
     }; 
 });
+builder.Services.AddDbContext<DataBaseContext>(options =>
+       options.UseSqlServer("Server=.;Database=CustomeAuthorizeAttributeForPermmision;Trusted_Connection=true;TrustServerCertificate=true;"));
 
 builder.Services.AddAuthorization();
 

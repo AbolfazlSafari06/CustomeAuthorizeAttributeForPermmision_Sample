@@ -2,6 +2,7 @@
 using WebApi.Attributes;
 using WebApi.Database;
 using WebApi.Models;
+using WebApi.Repository;
 
 
 namespace WebApi.Controllers;
@@ -11,62 +12,65 @@ namespace WebApi.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly DataBase _database;
+    private readonly IUserRepository _userRepository;
 
-    public UserController(DataBase database)
+    public UserController(IUserRepository userRepository)
     {
-        _database = database;
+        _userRepository = userRepository;
     }
 
     [HttpGet]
-    [CustomAuthorize("string1")]
+    [CustomAuthorize("strign1")]
     public ActionResult<List<User>> Get()
     {
-        return _database.GetList();
+        return _userRepository.GetList();
     } 
      
     [HttpGet("{id}")]
-    [CustomAuthorize("string2")]
+    [CustomAuthorize("strign2")]
     public ActionResult<User> Get(int id)
     {
-        return _database.Get(id);
+        return _userRepository.Get(id);
     }
 
     [HttpPost]
-    [CustomAuthorize("string3")]
+    [CustomAuthorize("strign3")]
     public ActionResult Post([FromBody] User value)
     {
-        _database.Create(value);
         return Ok();
+        //_userRepository.Create(value);
+        //return Ok();
     }
 
     [HttpPut("{id}")]
-    [CustomAuthorize("string3")]
+    [CustomAuthorize("strign4")]
     public ActionResult Put(int id, [FromBody] User value)
     {
-        var isSuccesfull = _database.Update(id, value);
-        if (isSuccesfull)
-        {
-            return Ok();
-        }
-        else
-        {
-            return BadRequest();
-        }
+        return Ok();
+        //var isSuccesfull = _userRepository.Update(id, value);
+        //if (isSuccesfull)
+        //{
+        //    return Ok();
+        //}
+        //else
+        //{
+        //    return BadRequest();
+        //}
     }
 
     [HttpDelete("{id}")]
-    [CustomAuthorize("string3")]
+    [CustomAuthorize("strign5")]
     public ActionResult Delete(int id)
     {
-        var isSuccesfull = _database.Delete(id);
-        if (isSuccesfull)
-        {
-            return Ok();
-        }
-        else
-        {
-            return BadRequest();
-        }
+        return Ok();
+        //var isSuccesfull = _userRepository.Delete(id);
+        //if (isSuccesfull)
+        //{
+        //    return Ok();
+        //}
+        //else
+        //{
+        //    return BadRequest();
+        //}
     }
 }
